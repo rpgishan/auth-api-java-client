@@ -63,7 +63,7 @@ publishing {
 
 openApiGenerate {
     generatorName.set("java")
-    inputSpec.set("$rootDir/src/main/resources/auth-api.yaml")
+    inputSpec.set("$rootDir/src/main/resources/auth-api-spec/v1/auth-api.yaml")
     outputDir.set("$buildDir/generated")
     apiPackage.set("${appPackage}.controller")
     invokerPackage.set("${appPackage}.service")
