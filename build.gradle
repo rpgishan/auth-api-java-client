@@ -49,6 +49,8 @@ dependencies {
     implementation "jakarta.validation:jakarta.validation-api:$jakarta_validation_version"
     implementation "org.hibernate.validator:hibernate-validator:$hibernate_validator_version"
 
+    implementation 'com.sundance.services:common-api-java-client:0.0.1-SNAPSHOT'
+
 
     testImplementation "junit:junit:$junit_version"
 }
@@ -71,6 +73,7 @@ openApiGenerate {
     groupId.set("$group")
     id.set("auth-api-client")
     version.set("$version")
+    importMappings.putAll(getCommonServiceDTOs())
     configOptions.set([
             title                : "Auth API Client",
             library              : "resttemplate",
@@ -81,6 +84,12 @@ openApiGenerate {
             useJakartaEe         : "true",
             snapshotVersion      : "true",
     ])
+}
+
+static def getCommonServiceDTOs(){
+    Map dtoMap = new HashMap()
+    dtoMap.put("ErrorDTO", "com.sundance.services.commonapiclient.dto.ErrorDTO")
+    return dtoMap;
 }
 
 sourceSets {
