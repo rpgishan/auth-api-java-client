@@ -86,7 +86,7 @@ openApiGenerate {
     ])
 }
 
-static def getCommonServiceDTOs(){
+static def getCommonServiceDTOs() {
     Map dtoMap = new HashMap()
     dtoMap.put("ErrorDTO", "com.sundance.services.commonapiclient.dto.ErrorDTO")
     return dtoMap;
