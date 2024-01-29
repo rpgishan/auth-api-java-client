@@ -1,0 +1,472 @@
+openapi: 3.0.1
+info:
+  contact:
+    email: rpgishan@gmail.com
+    name: Gishan Pemathilake
+    url: https://github.com/rpgishan
+  description: Auth API of Sundance Auth Service
+  title: Auth API
+  version: 0.0.1
+servers:
+  - description: Server url
+    url: http://localhost:8081
+paths:
+  /version:
+    get:
+      operationId: version
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+          description: unexpected error
+      tags:
+        - common-controller
+      x-accepts: application/json
+      x-tags:
+        - tag: common-controller
+  /introspect:
+    post:
+      operationId: introspect
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntrospectionDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+          description: unexpected error
+      security:
+        - authorizationHeader: []
+      tags:
+        - introspect-controller
+      x-accepts: application/json
+      x-tags:
+        - tag: introspect-controller
+  /user/:
+    get:
+      operationId: userGet
+      parameters:
+        - explode: true
+          in: query
+          name: username
+          required: true
+          schema:
+            type: string
+          style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+          description: unexpected error
+      security:
+        - authorizationHeader: []
+      tags:
+        - user-controller
+      x-accepts: application/json
+      x-tags:
+        - tag: user-controller
+    post:
+      operationId: addNewUser
+      parameters:
+        - explode: true
+          in: query
+          name: username
+          required: true
+          schema:
+            type: string
+          style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+          description: unexpected error
+      security:
+        - authorizationHeader: []
+      tags:
+        - user-controller
+      x-accepts: application/json
+      x-tags:
+        - tag: user-controller
+      x-content-type: application/json
+    put:
+      operationId: userUpdate
+      parameters:
+        - explode: true
+          in: query
+          name: username
+          required: true
+          schema:
+            type: string
+          style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+          description: unexpected error
+      security:
+        - authorizationHeader: []
+      tags:
+        - user-controller
+      x-accepts: application/json
+      x-tags:
+        - tag: user-controller
+      x-content-type: application/json
+  /user/all:
+    get:
+      operationId: allUsersGet
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+                type: array
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+          description: unexpected error
+      security:
+        - authorizationHeader: []
+      tags:
+        - user-controller
+      x-accepts: application/json
+      x-tags:
+        - tag: user-controller
+  /authentication/refreshtoken:
+    post:
+      operationId: refreshToken
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+          description: unexpected error
+      security:
+        - authorizationHeader: []
+      tags:
+        - authentication-controller
+      x-accepts: application/json
+      x-tags:
+        - tag: authentication-controller
+  /authentication/login:
+    post:
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+          description: unexpected error
+      tags:
+        - authentication-controller
+      x-accepts: application/json
+      x-tags:
+        - tag: authentication-controller
+      x-content-type: application/json
+  /authentication/register:
+    post:
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+          description: unexpected error
+      tags:
+        - authentication-controller
+      x-accepts: application/json
+      x-tags:
+        - tag: authentication-controller
+      x-content-type: application/json
+components:
+  schemas:
+    VersionDTO:
+      example:
+        version: version
+      properties:
+        version:
+          type: string
+      required:
+        - version
+    ErrorDTO:
+      properties:
+        code:
+          format: int32
+          type: integer
+        message:
+          type: string
+      required:
+        - code
+        - message
+      type: object
+    IntrospectionDTO:
+      example:
+        active: true
+        user:
+          roles:
+            - code: code
+              permissions:
+                - code: code
+                  name: name
+                - code: code
+                  name: name
+              name: name
+              status: status
+            - code: code
+              permissions:
+                - code: code
+                  name: name
+                - code: code
+                  name: name
+              name: name
+              status: status
+          businessCenters:
+            - name: name
+              description: description
+              url: url
+            - name: name
+              description: description
+              url: url
+          type: null
+          email: email
+          username: username
+          status: null
+      properties:
+        user:
+          $ref: '#/components/schemas/UserDTO'
+        active:
+          type: boolean
+      type: object
+    UserDTO:
+      example:
+        roles:
+          - code: code
+            permissions:
+              - code: code
+                name: name
+              - code: code
+                name: name
+            name: name
+            status: status
+          - code: code
+            permissions:
+              - code: code
+                name: name
+              - code: code
+                name: name
+            name: name
+            status: status
+        businessCenters:
+          - name: name
+            description: description
+            url: url
+          - name: name
+            description: description
+            url: url
+        type: null
+        email: email
+        username: username
+        status: null
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        status:
+          $ref: '#/components/schemas/UserStatusDTO'
+        type:
+          $ref: '#/components/schemas/UserTypeDTO'
+        roles:
+          items:
+            $ref: '#/components/schemas/RoleDTO'
+          type: array
+        businessCenters:
+          items:
+            $ref: '#/components/schemas/CompanyDTO'
+          type: array
+      required:
+        - email
+        - username
+      type: object
+    UserStatusDTO:
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - PENDING_VALIDATION
+      type: string
+    UserTypeDTO:
+      enum:
+        - ADMIN
+        - AUX_ADMIN
+        - SYSTEM
+        - RECRUITER
+        - SEEKER
+      type: string
+    RoleDTO:
+      example:
+        code: code
+        permissions:
+          - code: code
+            name: name
+          - code: code
+            name: name
+        name: name
+        status: status
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+        permissions:
+          items:
+            $ref: '#/components/schemas/PermissionDTO'
+          type: array
+      required:
+        - code
+    PermissionDTO:
+      example:
+        code: code
+        name: name
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+      required:
+        - code
+    CompanyDTO:
+      example:
+        name: name
+        description: description
+        url: url
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+      required:
+        - name
+    TokenDTO:
+      example:
+        token: token
+      properties:
+        token:
+          type: string
+      required:
+        - token
+    LoginDTO:
+      example:
+        password: password
+        username: username
+      properties:
+        username:
+          type: string
+        password:
+          format: password
+          type: string
+      required:
+        - password
+        - username
+      type: object
+    RegisterDTO:
+      allOf:
+        - $ref: '#/components/schemas/UserDTO'
+        - properties:
+            password:
+              type: string
+            confirmPassword:
+              type: string
+          required:
+            - confirmPassword
+            - password
+          type: object
