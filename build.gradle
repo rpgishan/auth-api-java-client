@@ -1,8 +1,6 @@
 plugins {
     id 'java'
     id 'maven-publish'
-    id 'org.springframework.boot' version '3.2.2'
-    id 'io.spring.dependency-management' version '1.1.4'
     id 'org.openapi.generator' version '7.1.0'
 }
 
@@ -26,6 +24,7 @@ repositories {
 }
 
 ext {
+    spring_web_version = "6.1.0"
     jackson_version = "2.14.2"
     jackson_databind_version = "2.15.1"
     jackson_databind_nullable_version = "0.2.6"
@@ -37,9 +36,8 @@ ext {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation "org.springframework:spring-web"
-    implementation "org.springframework:spring-context"
+    implementation "org.springframework:spring-web:$spring_web_version"
+    implementation "org.springframework:spring-context:$spring_web_version"
     implementation "com.google.code.findbugs:jsr305:3.0.2"
     implementation "com.fasterxml.jackson.core:jackson-core:$jackson_version"
     implementation "com.fasterxml.jackson.core:jackson-annotations:$jackson_version"
@@ -74,7 +72,7 @@ openApiGenerate {
     id.set("auth-api-client")
     version.set("$version")
     configOptions.set([
-            title                : "Right Talent Auth API Client",
+            title                : "Auth API Client",
             library              : "resttemplate",
             generateClientAsBean : "true",
             dateLibrary          : "java8",
