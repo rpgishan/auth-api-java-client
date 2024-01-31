@@ -13,9 +13,7 @@ java {
 }
 
 configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+    apisource
 }
 
 repositories {
@@ -49,10 +47,8 @@ dependencies {
     implementation "jakarta.validation:jakarta.validation-api:$jakarta_validation_version"
     implementation "org.hibernate.validator:hibernate-validator:$hibernate_validator_version"
 
-    implementation 'com.sundance.services:common-api-java-client:0.0.1-SNAPSHOT'
+    apisource group: 'com.sundance.apispecs', name: 'auth-api-spec', version: '0.0.1-SNAPSHOT', classifier: 'openapi', ext: 'yaml'
 
-
-    testImplementation "junit:junit:$junit_version"
 }
 
 publishing {
@@ -65,7 +61,7 @@ publishing {
 
 openApiGenerate {
     generatorName.set("java")
-    inputSpec.set("$rootDir/src/main/resources/auth-api-spec/v1/auth-api.yaml")
+    inputSpec.set("$buildDir/api-specs/auth-api-spec.yaml")
     outputDir.set("$buildDir/generated")
     apiPackage.set("${appPackage}.controller")
     invokerPackage.set("${appPackage}.service")
@@ -73,7 +69,8 @@ openApiGenerate {
     groupId.set("$group")
     id.set("auth-api-client")
     version.set("$version")
-    importMappings.putAll(getCommonServiceDTOs())
+    generateApiTests.set(false)
+    generateModelTests.set(false)
     configOptions.set([
             title                : "Auth API Client",
             library              : "resttemplate",
@@ -86,12 +83,6 @@ openApiGenerate {
     ])
 }
 
-static def getCommonServiceDTOs() {
-    Map dtoMap = new HashMap()
-    dtoMap.put("ErrorDTO", "com.sundance.services.commonapiclient.dto.ErrorDTO")
-    return dtoMap;
-}
-
 sourceSets {
     main {
         java {
@@ -100,10 +91,21 @@ sourceSets {
     }
 }
 
-tasks.compileJava {
-    dependsOn(tasks.openApiGenerate)
+tasks.register('extractApi', Sync) {
+    dependsOn configurations.apisource
+    from {
+        configurations.apisource
+    }
+    into "$buildDir/api-specs/"
+    rename { String fileName ->
+        fileName.replaceAll("(?!\\.)([-.]?)(\\d+(\\.\\d+)+)(?:[-.][A-Z]+)?(?![\\d.])(?:[-.][a-z]+)?", "")
+    }
 }
 
-test {
-    useJUnitPlatform()
+tasks.openApiGenerate {
+    dependsOn(tasks.extractApi)
+}
+
+tasks.compileJava {
+    dependsOn(tasks.openApiGenerate)
 }
