@@ -1,0 +1,97 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'com.sundance.plugins.api.generator' version '0.0.1-SNAPSHOT'
+}
+
+group = 'com.sundance.services'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+ext {
+    spring_web_version = "6.1.0"
+    jackson_version = "2.14.2"
+    jackson_databind_version = "2.15.1"
+    jackson_databind_nullable_version = "0.2.6"
+    jakarta_annotation_version = "2.1.1"
+    jakarta_validation_version = "3.0.2"
+    jodatime_version = "2.9.9"
+    junit_version = "4.13.2"
+    hibernate_validator_version = "8.0.1.Final"
+}
+
+dependencies {
+    implementation "org.springframework:spring-web:$spring_web_version"
+    implementation "org.springframework:spring-context:$spring_web_version"
+    implementation "com.google.code.findbugs:jsr305:3.0.2"
+    implementation "com.fasterxml.jackson.core:jackson-core:$jackson_version"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:$jackson_version"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_databind_version"
+    implementation "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jackson_version"
+    implementation "org.openapitools:jackson-databind-nullable:$jackson_databind_nullable_version"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version"
+    implementation "jakarta.annotation:jakarta.annotation-api:$jakarta_annotation_version"
+    implementation "jakarta.validation:jakarta.validation-api:$jakarta_validation_version"
+    implementation "org.hibernate.validator:hibernate-validator:$hibernate_validator_version"
+
+    apiSource group: 'com.sundance.apispecs', name: 'auth-api-spec', version: '0.0.1-SNAPSHOT', classifier: 'openapi', ext: 'yaml'
+
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+String appPackage = "${group}.authapiclient"
+String apiSpecDirectory = "$buildDir/api-specs"
+boolean isSpec = false
+
+apiSpecCopy {
+    isSpecGenerate.set(isSpec)
+    apiSpecDir.set(apiSpecDirectory)
+}
+
+apiGenerate {
+    isSpecGenerate.set(isSpec)
+    generatorName.set("java")
+    inputSpec.set("$buildDir/api-specs/auth-api-spec.yaml")
+    outputDir.set("$buildDir/generated")
+    apiPackage.set("${appPackage}.controller")
+    invokerPackage.set("${appPackage}.service")
+    modelPackage.set("${appPackage}.dto")
+    groupId.set("$group")
+    id.set("auth-api-client")
+    version.set("$version")
+    generateApiTests.set(false)
+    generateModelTests.set(false)
+    configOptions.set([
+            title                : "Auth API Client",
+            library              : "resttemplate",
+            generateClientAsBean : "true",
+            dateLibrary          : "java8",
+            performBeanValidation: "true",
+            useBeanValidation    : "true",
+            useJakartaEe         : "true",
+            snapshotVersion      : "true",
+    ])
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs(files("${apiGenerate.outputDir.get()}/src/main"))
+        }
+    }
+}

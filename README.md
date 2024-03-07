@@ -1,1 +1,1 @@
-# authentication-api-java-client
+# auth-api-java-client
